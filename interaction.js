@@ -8,6 +8,7 @@ function DnD(canvas, interactor) {
   this.positionFinaleX = 0;
   this.positionFinaleY= 0;
   this.clicked = false;
+  this.interactor = interactor;
 
 	// Developper les 3 fonctions gérant les événements
 
@@ -16,23 +17,27 @@ function DnD(canvas, interactor) {
     this.positionInitialeX  = position.x;
     this.positionInitialeY = position.y;
     this.clicked = true;
-    console.log('drag x : ',this.positionInitialeX ,' y : ',this.positionInitialeY)
-  }
+    this.interactor.onInteractionStart(this);
+    // console.log('drag x : ',this.positionInitialeX ,' y : ',this.positionInitialeY)
+  }.bind(this);
 
   DnD.prototype.Move = function(evt){
-
-  }
-
-  DnD.prototype.Drop = function(evt){
     if(this.clicked){
       var position = getMousePosition(canvas,evt);
       this.positionFinaleX = position.x;
       this.positionFinaleY = position.y;
-      console.log('drop x : ',this.positionFinaleX ,' y : ',this.positionFinaleY)
+      this.interactor.onInteractionUpdate(this);
+      // console.log('move x : ',this.positionFinaleX ,' y : ',this.positionFinaleY)
     }
-  
+  }.bind(this)
 
-  }
+  DnD.prototype.Drop = function(evt){
+    var position = getMousePosition(canvas,evt);
+    this.positionFinaleX = position.x;
+    this.positionFinaleY = position.y;
+    this.clicked = false;
+    this.interactor.onInteractionEnd(this);
+  }.bind(this)
 
 	// Associer les fonctions précédentes aux évènements du canvas.
 
